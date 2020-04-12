@@ -5,6 +5,13 @@ const session = require("express-session");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const errorHandler = require("errorhandler");
+require("dotenv").config();
+
+// Pull the mongoose connection address
+const uri = process.env.ATLAS_URI;
+
+// Declare port
+const port = process.env.PORT || 1964;
 
 mongoose.promise = global.Promise;
 
@@ -29,8 +36,12 @@ if (!isProduction) {
   app.use(errorHandler());
 }
 
-// Mongoose
-mongoose.connect("mongodb://localhost/passport-tutorial");
+// Establish connection to mongoose
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+});
 
 // Error handler && middleware
 if (!isProduction) {
@@ -56,4 +67,6 @@ app.use((err, req, res) => {
   });
 });
 
-app.listen(1964, () => console.log(`Server running on http://localhost:1964`));
+app.listen(port, () =>
+  console.log(`Server running on http://localhost:${port}`)
+);
